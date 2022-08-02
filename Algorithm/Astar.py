@@ -1,3 +1,4 @@
+from typing import Tuple
 from DataSctructure.Heap import MinHeap
 from DataSctructure.Others import Cost, History, Point
 from Base import Base
@@ -25,26 +26,39 @@ class Astar(Base):
             
             cur_cost = point.get_cost()
             cur_cor = point.get_cor()
-            x, y = cur_cor
+            
+            if cur_cor == end:
+                break
             
             for next_cor in self.matrix.get_neighbors(cur_cor):
                 path_cost = cur_cost + self.matrix.get_cell(next_cor).get_cost()
-                est_val = self.heuristic(next_cor)
-                next_cost = path_cost + est_val
+                est_cost = self.heuristic(next_cor, end)
+                priority = path_cost + est_cost
                 
-                if not cost_map.is_cor_exist(next_cor) or cost_map.compare_cost(next_cor, next_cost):
-                    cost_map.update(next_cor, next_cost)
+                if not cost_map.is_cor_exist(next_cor) or cost_map.compare_cost(next_cor, priority):
+                    cost_map.update(next_cor, path_cost)
                     history_map.update(cur_cor, next_cor)
-                    
-                    
-                    
-                    
-                    
-                    pass
+                    min_heap.add(Point(next_cor, priority))
     
-    def heuristic(self, cur_point):
+        if cost_map.is_cor_exist(end):
+            path = self.path_start_to_end(history_map)
+        else:
+            path = []
+        
+        return path
+    
+    def path_start_to_end(self, history_map: History):
+        path = []
+        cor = self.matrix.get_end()
+        while cor:
+            path = [cor] + path
+            cor = history_map.get_parent(cor)
+        return path
+            
+    
+    def heuristic(self, cur_point, end):
         cur_x, cur_y = cur_point
-        end_x, end_y = self.end_point
+        end_x, end_y = end
         return abs(end_x - cur_x) + abs(end_y - cur_y)
 
     

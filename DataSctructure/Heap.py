@@ -15,10 +15,10 @@ class MinHeap:
         if i < self.n:
             swap_idx = i
             
-            if 2*i + 1 < self.n and self.arr[2*i+1].get_value() < self.arr[swap_idx].get_value():
+            if 2*i + 1 < self.n and self.arr[2*i+1].get_cost() < self.arr[swap_idx].get_cost():
                 swap_idx = 2*i+1
             
-            if 2*i + 2 < self.n and self.arr[2*i+2].get_value() < self.arr[swap_idx].get_value():
+            if 2*i + 2 < self.n and self.arr[2*i+2].get_cost() < self.arr[swap_idx].get_cost():
                 swap_idx = 2*i+2
             
             if swap_idx != i:
@@ -28,7 +28,7 @@ class MinHeap:
     def bottom_up(self, i) -> None:
         if i > 0:
             swap_idx = (i-1)//2
-            if self.arr[i].get_value() < self.arr[swap_idx].get_value():
+            if self.arr[i].get_cost() < self.arr[swap_idx].get_cost():
                 self.swap(i, swap_idx)
                 self.bottom_up(swap_idx)
         
@@ -47,8 +47,8 @@ class MinHeap:
         self.top_down(0)
         return self.arr.pop()
     
-    def add(self, value) -> None:
-        self.arr.append(value)
+    def add(self, node: Point) -> None:
+        self.arr.append(node)
         self.bottom_up(self.n)
         self.n += 1
         
