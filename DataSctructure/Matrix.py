@@ -1,39 +1,21 @@
-from typing import Tuple
 from random import randint
+from typing import List, Tuple
+import enum
 
-class Point:
-    def __init__(self, cor: Tuple, cost: int) -> None:
-        self.cost = cost
-        self.cor = cor
-    
-    def get_cost(self) -> int:
-        return self.cost
-    
-    def get_cor(self) -> Tuple:
-        return self.cor
-    
-class History:
+class Cell_color:
     def __init__(self) -> None:
-        self.history = {}
+        self.color = {
+            1: (245,245,220),   # white
+            2: (210,105,30),    # brown
+            3: (102,205,0),     # green
+            4: (122,197,205)    # blue
+        }
         
-    def update(self, parent_cor: Tuple, cur_cor: Tuple) -> None:
-        self.history[cur_cor] = parent_cor
+    def get_color(self, cost):
+        if cost not in self.color:
+            return (0,0,0) # black
+        return self.color[cost]
     
-    def get_parent(self, cur_cor: Tuple) -> Tuple:
-        return self.history[cur_cor]
-    
-class Cost:
-    def __init__(self) -> None:
-        self.cost = {}
-    
-    def is_cor_exist(self, cor):
-        return cor in self.cost
-    
-    def compare_cost(self, cor, new_cost):
-        return new_cost < self.cost[cor]
-    
-    def update(self, cor, new_cost):
-        self.cost[cor] = new_cost
 
 class Cell:
     def __init__(self, can_move: bool = True, cost: int = 1) -> None:
@@ -42,13 +24,14 @@ class Cell:
         if not self.can_move:
             self.cost = None
     
-    def can_move(self):
+    def can_move(self) -> bool:
         return self.can_move
     
-    def get_cost(self):
+    def get_cost(self) -> int:
         return self.cost
 
 class Matrix:
+    color = Cell_color()
     def __init__(self, m, n) -> None:
         self.start = (randint(0, m-1), randint(0, n-1))
         
@@ -62,7 +45,7 @@ class Matrix:
         
         self.moves = [ (1,0), (-1,0), (0,1), (0,-1) ]
     
-    def get_neighbors(self, cor):
+    def get_neighbors(self, cor) -> List[Tuple]:
         neightbors = []
         
         x, y = cor
@@ -75,13 +58,17 @@ class Matrix:
                     neightbors.append(new_cor)
         
         return neightbors
+
+    def get_color(self, cor):
+        cell = self.get_cell(cor)
+        return self.color.get_color(cell.get_cost())
         
     def get_cell(self, cor) -> Cell:
         i, j = cor
         return self.matrix[i][j]
 
-    def get_start(self):
+    def get_start(self) -> Tuple:
         return self.start
     
-    def get_end(self):
+    def get_end(self) -> Tuple:
         return self.end

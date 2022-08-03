@@ -1,5 +1,5 @@
 from typing import List
-from DataSctructure.Others import Point
+from DataSctructure.PathFinding_helper import Point
 
 
 class MinHeap:

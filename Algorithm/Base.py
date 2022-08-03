@@ -1,5 +1,4 @@
-from DataSctructure.Others import Matrix
-
+from DataSctructure.Matrix import Matrix
 
 class Base:
     def __init__(self, matrix: Matrix) -> None:
