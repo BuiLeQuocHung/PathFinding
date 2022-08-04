@@ -1,32 +1,38 @@
+import pygame, pygame_gui
+
 from typing import Tuple
-import pygame
-from pygame import Rect
 from DataSctructure.Matrix import Matrix
 
 
 class Screen:
-    block_size = 30
+    block_size = 18
     
-    width_block = 50
-    height_block = 30
-    block_space = 1
-    
-    width = (block_size + 1) * width_block + 300
-    height = (block_size + 1) * height_block
-    
-    def __init__(self) -> None:
-        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+    def __init__(self, size) -> None:
+        self.screen = pygame.display.set_mode(size)
         
-    def draw_cell(self, rect: Rect, color: Tuple[int, int, int]) -> None:
+        
+    def draw_cell(self, rect: pygame.Rect, color: Tuple[int, int, int]) -> None:
         pygame.draw.rect(self.screen, color, rect)
     
     def draw_matrix(self, matrix: Matrix) -> None:
-        for i in range(self.width_block):
-            for j in range(self.height_block):
+        offset_x = 100
+        offset_y = 200
+        
+        cell_size = matrix.get_cell_size()
+        delta = (self.block_size - cell_size) // 2
+        
+        for i in range(matrix.get_width()):
+            for j in range(matrix.get_height()):
                 # pygame is reversed, x is j and y is i
-                x = j * (self.block_size + self.block_space)
-                y = i * (self.block_size + self.block_space)
+                x = j * (self.block_size) + offset_x
+                y = i * (self.block_size) + offset_y
                 
-                rect = Rect(x, y, self.block_size, self.block_size)
+                rect = pygame.Rect(x + delta, y + delta, cell_size, cell_size)
                 rect_color = matrix.get_color((i,j))
                 self.draw_cell(rect, rect_color)
+    
+    def draw_ui_manager(self, ui_manager: pygame_gui.UIManager) -> None:
+        ui_manager.draw_ui(self.screen)
+        
+    def draw_surface(self, surface: pygame.Surface) -> None:
+        self.screen.blit(surface, (0, 0))

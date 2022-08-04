@@ -32,9 +32,10 @@ class Cell:
 
 class Matrix:
     color = Cell_color()
+    cell_size = 15
     def __init__(self, m, n) -> None:
         self.start = (randint(0, m-1), randint(0, n-1))
-        
+
         self.end = (randint(0, m-1), randint(0, n-1))
         while self.start == self.end:
             self.end = (randint(0, m-1), randint(0, n-1))
@@ -59,7 +60,13 @@ class Matrix:
         
         return neightbors
 
-    def get_color(self, cor):
+    def get_color(self, cor) -> Tuple:
+        if cor == self.start:
+            return (255,64,64) # red
+        
+        if cor == self.end:
+            return (255,69,0) # orange
+        
         cell = self.get_cell(cor)
         return self.color.get_color(cell.get_cost())
         
@@ -72,3 +79,12 @@ class Matrix:
     
     def get_end(self) -> Tuple:
         return self.end
+    
+    def get_width(self):
+        return self.m
+    
+    def get_height(self):
+        return self.n
+    
+    def get_cell_size(self):
+        return self.cell_size
