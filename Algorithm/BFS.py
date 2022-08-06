@@ -7,23 +7,23 @@ class BFS(AlgorithmBase):
         super().__init__(matrix)
         
     def path_finding(self):        
-        start = self.matrix.get_start()
-        end = self.matrix.get_end()
+        start_cor = self.matrix.get_start_cor()
+        end_cor = self.matrix.get_end_cor()
         
-        queue = [start]
+        queue = [start_cor]
         
         history_map = History()
-        history_map.update(None, start)
+        history_map.update(None, start_cor)
         
         processing_order = []
         
         while queue:
             cur_cor = queue.pop(0)
             
-            if cur_cor not in [start, end]:
+            if cur_cor not in [start_cor, end_cor]:
                 processing_order.append(cur_cor)
 
-            if cur_cor == end:
+            if cur_cor == end_cor:
                 break
             
             for next_cor in self.matrix.get_neighbors(cur_cor):
@@ -31,22 +31,10 @@ class BFS(AlgorithmBase):
                     history_map.update(cur_cor, next_cor)
                     queue.append(next_cor)
         
-        if history_map.is_cor_exist(end):
+        if history_map.is_cor_exist(end_cor):
             path = self.gen_path(history_map)
         else:
             path = []
             
         self.update_path(path)
         self.update_processing_order(processing_order)
-    
-    def update_path(self, path: List[Tuple]):
-        self.path = path
-        
-    def get_path(self) -> List[Tuple]:
-        return self.path
-
-    def update_processing_order(self, processing_order: List[Tuple]):
-        self.processing_order = processing_order
-    
-    def get_processing_order(self):
-        return self.processing_order

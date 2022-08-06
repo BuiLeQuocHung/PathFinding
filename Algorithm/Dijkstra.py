@@ -1,21 +1,22 @@
 from typing import List, Tuple
-from DataSctructure.Heap import MinHeap
-from DataSctructure.PathFinding_helper import Cost, History, Point
-from Algorithm.AlgorithmBase import AlgorithmBase
 
-class Astar(AlgorithmBase):
-    path = []
-    processing_order = []
-    
-    def __init__(self, matrix) -> None:
+from Algorithm.AlgorithmBase import AlgorithmBase
+from DataSctructure.Heap import MinHeap
+from DataSctructure.Matrix import Matrix
+from DataSctructure.PathFinding_helper import Cost, History, Point
+
+
+class Dijkstra(AlgorithmBase):
+    def __init__(self, matrix: Matrix) -> None:
         super().__init__(matrix)
-        
+    
     def path_finding(self):
         start_cor = self.matrix.get_start_cor()
         end_cor = self.matrix.get_end_cor()
         
-        min_heap = MinHeap([])
-        min_heap.add(Point(start_cor, self.matrix.get_cell(start_cor).get_cost()))
+        visited = {}
+        
+        min_heap = MinHeap([Point(start_cor, self.matrix.get_cell(start_cor).get_cost())])
         
         history_map = History()
         history_map.update(None, start_cor)
@@ -29,7 +30,7 @@ class Astar(AlgorithmBase):
             point = min_heap.pop()
             
             cur_cor = point.get_cor()
-            cur_cost = cost_map.get_path_cost(cur_cor)
+            cur_cost = point.get_cost()
             
             if cur_cor not in [start_cor, end_cor]:
                 processing_order.append(cur_cor)
@@ -37,15 +38,16 @@ class Astar(AlgorithmBase):
             if cur_cor == end_cor:
                 break
             
+            visited[point] = True
+            
             for next_cor in self.matrix.get_neighbors(cur_cor):
-                path_cost = cur_cost + self.matrix.get_cell(next_cor).get_cost()
-                est_cost = self.heuristic(next_cor, end_cor)
-                priority = path_cost + est_cost
-                if not history_map.is_cor_exist(next_cor) or cost_map.compare_cost(next_cor, path_cost):
-                    cost_map.update(next_cor, path_cost)
-                    history_map.update(cur_cor, next_cor)
-                    min_heap.add(Point(next_cor, priority))
-    
+                if next_cor not in visited:
+                    next_cost = cur_cost + self.matrix.get_cell(next_cor).get_cost()
+                    if not history_map.is_cor_exist(next_cor) or cost_map.compare_cost(next_cor, next_cost):
+                        history_map.update(cur_cor, next_cor)
+                        cost_map.update(next_cor, next_cost)
+                        min_heap.add(Point(next_cor, next_cost))
+        
         if history_map.is_cor_exist(end_cor):
             print(cost_map.get_path_cost(end_cor))
             path = self.gen_path(history_map)
@@ -54,9 +56,6 @@ class Astar(AlgorithmBase):
             
         self.update_path(path)
         self.update_processing_order(processing_order)
+            
         
     
-    def heuristic(self, cur_point, end) -> int:
-        cur_x, cur_y = cur_point
-        end_x, end_y = end
-        return abs(end_x - cur_x) + abs(end_y - cur_y)

@@ -2,12 +2,14 @@ import enum
 from Algorithm.Astar import Astar
 from Algorithm.BFS import BFS
 from Algorithm.DFS import DFS
+from Algorithm.Dijkstra import Dijkstra
 from DataSctructure.Matrix import Matrix
 
 class AlgorithmOption(enum.Enum):
     ASTAR = 'Astar'
     BFS = 'BFS'
     DFS = 'DFS'
+    DIJKSTRA = "Dijkstra"
     
     @classmethod
     def to_list(cls):
@@ -28,6 +30,8 @@ class AlgorithmSelection:
             return BFS(matrix)
         elif algorithm_name == AlgorithmOption.DFS.value:
             return DFS(matrix)
+        elif algorithm_name == AlgorithmOption.DIJKSTRA.value:
+            return Dijkstra(matrix)
         
         raise ValueError("Algorithm not exists")
         

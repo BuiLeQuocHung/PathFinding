@@ -3,7 +3,7 @@ from DataSctructure.PathFinding_helper import Point
 
 
 class MinHeap:
-    def __init__(self, arr: List[Point] = []):
+    def __init__(self, arr: List[Point]):
         self.n = len(arr)
         self.arr = arr
     
@@ -52,11 +52,11 @@ class MinHeap:
         self.bottom_up(self.n)
         self.n += 1
         
-    def print_heap(self):
-        start = 0
-        range = 1
-        while start < self.n:
-            print(self.arr[start:start+range])
-            start = start + range
-            range *= 2
+    # def print_heap(self):
+    #     start = 0
+    #     range = 1
+    #     while start < self.n:
+    #         print(self.arr[start:start+range])
+    #         start = start + range
+    #         range *= 2
         

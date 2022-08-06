@@ -30,17 +30,31 @@ class Cell:
     def get_cost(self) -> int:
         return self.cost
 
+# for start and end point
+class Special_Cell(Cell):
+    def __init__(self, cor: Tuple, can_move: bool = True, cost: int = 1) -> None:
+        super().__init__(can_move, cost)
+        self.cor = cor
+        
+    def update_cor(self, cor):
+        self.cor = cor
+    
+    def get_cor(self):
+        return self.cor
+
 class Matrix:
     color = Cell_color()
     start_color = (238,44,44) # red
     end_color = (139,28,98) # purple
     
     def __init__(self, m, n) -> None:
-        self.start = (randint(0, m-1), randint(0, n-1))
+        start_cor = (randint(0, m-1), randint(0, n-1))
+        self.start = Special_Cell(start_cor)
 
-        self.end = (randint(0, m-1), randint(0, n-1))
-        while self.start == self.end:
-            self.end = (randint(0, m-1), randint(0, n-1))
+        end_cor = (randint(0, m-1), randint(0, n-1))
+        while start_cor == end_cor:
+            end_cor = (randint(0, m-1), randint(0, n-1))
+        self.end = Special_Cell(end_cor)
         
         self.m = m
         self.n = n
@@ -50,23 +64,20 @@ class Matrix:
     
     def get_neighbors(self, cor) -> List[Tuple]:
         neightbors = []
-        
         x, y = cor
         for move in self.moves:
             i, j = move
-            
             new_cor = (x+i, y+j)
-            if 0 <= x+i < self.m and 0 <= y+j < self.n \
-                and self.get_cell(cor).can_move():
+            if 0 <= x+i < self.m and 0 <= y+j < self.n and self.get_cell(new_cor).can_move():
                     neightbors.append(new_cor)
         
         return neightbors
 
     def get_color(self, cor) -> Tuple:
-        if cor == self.start:
+        if cor == self.start.get_cor():
             return self.start_color
         
-        if cor == self.end:
+        if cor == self.end.get_cor():
             return self.end_color
         
         cell = self.get_cell(cor)
@@ -74,13 +85,17 @@ class Matrix:
         
     def get_cell(self, cor) -> Cell:
         i, j = cor
+        if cor == self.start.get_cor():
+            return self.start
+        if cor == self.end.get_cor():
+            return self.end
         return self.matrix[i][j]
 
-    def get_start(self) -> Tuple:
-        return self.start
+    def get_start_cor(self) -> Tuple:
+        return self.start.get_cor()
     
-    def get_end(self) -> Tuple:
-        return self.end
+    def get_end_cor(self) -> Tuple:
+        return self.end.get_cor()
     
     def get_width(self):
         return self.m
@@ -88,5 +103,3 @@ class Matrix:
     def get_height(self):
         return self.n
     
-    def get_cell_size(self):
-        return self.cell_size

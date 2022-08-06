@@ -38,5 +38,7 @@ class Cost:
         self.cost[cor] = new_cost
         
     def get_path_cost(self, cor):
+        if cor not in self.cost:
+            print(list(self.cost.keys()))
         return self.cost[cor]
 
