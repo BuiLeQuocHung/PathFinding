@@ -19,20 +19,22 @@ class Cell_color:
 
 class Cell:
     def __init__(self, can_move: bool = True, cost: int = 1) -> None:
-        self.can_move = can_move
+        self._can_move = can_move
         self.cost = cost
         if not self.can_move:
             self.cost = None
     
     def can_move(self) -> bool:
-        return self.can_move
+        return self._can_move
     
     def get_cost(self) -> int:
         return self.cost
 
 class Matrix:
     color = Cell_color()
-    cell_size = 15
+    start_color = (238,44,44) # red
+    end_color = (139,28,98) # purple
+    
     def __init__(self, m, n) -> None:
         self.start = (randint(0, m-1), randint(0, n-1))
 
@@ -42,7 +44,7 @@ class Matrix:
         
         self.m = m
         self.n = n
-        self.matrix = [[Cell(can_move=True, cost=1) for j in range(self.n)] for i in range(self.m)]
+        self.matrix = [[Cell(can_move=True, cost=randint(1,4)) for j in range(self.n)] for i in range(self.m)]
         
         self.moves = [ (1,0), (-1,0), (0,1), (0,-1) ]
     
@@ -62,10 +64,10 @@ class Matrix:
 
     def get_color(self, cor) -> Tuple:
         if cor == self.start:
-            return (255,64,64) # red
+            return self.start_color
         
         if cor == self.end:
-            return (255,69,0) # orange
+            return self.end_color
         
         cell = self.get_cell(cor)
         return self.color.get_color(cell.get_cost())

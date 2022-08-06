@@ -17,6 +17,9 @@ class History:
         
     def update(self, parent_cor: Tuple, cur_cor: Tuple) -> None:
         self.history[cur_cor] = parent_cor
+        
+    def is_cor_exist(self, cor) -> bool:
+        return cor in self.history
     
     def get_parent(self, cur_cor: Tuple) -> Tuple:
         return self.history[cur_cor]
@@ -24,9 +27,6 @@ class History:
 class Cost:
     def __init__(self) -> None:
         self.cost = {}
-    
-    def is_cor_exist(self, cor) -> bool:
-        return cor in self.cost
     
     def compare_cost(self, cor, new_cost) -> bool:
         """
@@ -36,4 +36,7 @@ class Cost:
     
     def update(self, cor, new_cost) -> None:
         self.cost[cor] = new_cost
+        
+    def get_path_cost(self, cor):
+        return self.cost[cor]
 

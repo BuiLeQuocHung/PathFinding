@@ -1,33 +1,59 @@
 import pygame, pygame_gui
+import time
+import threading
 
-from typing import Tuple
+from typing import List, Tuple
 from DataSctructure.Matrix import Matrix
 
 
 class Screen:
     block_size = 18
+    cell_size = 15
     
     def __init__(self, size) -> None:
         self.screen = pygame.display.set_mode(size)
+        self.matrix_offset_x = 0
+        self.matrix_offset_y = 100
         
-        
-    def draw_cell(self, rect: pygame.Rect, color: Tuple[int, int, int]) -> None:
+    def draw_cell(self, rect: pygame.Rect, color: Tuple) -> None:
         pygame.draw.rect(self.screen, color, rect)
+        
+    def draw_cells(self, rects:List[pygame.Rect], colors: List[Tuple]) -> None:
+        n = len(rects)
+        m = len(colors)
+        
+        if n != m:
+            raise ValueError("rects and colors must have same length")
+        
+        for idx in range(n):
+            self.draw_cell(rects[idx], colors[idx])
+        
+    def draw_cors(self, cors: List[Tuple], color, delay, event: threading.Event):
+        delta = (self.block_size - self.cell_size) / 2
+        for cor in cors:
+            x, y = cor
+            new_x = y * (self.block_size) + self.matrix_offset_x
+            new_y = x * (self.block_size) + self.matrix_offset_y
+            
+            rect = pygame.Rect(new_x + delta, new_y + delta, self.cell_size, self.cell_size)
+            self.draw_cell(rect, color)
+            pygame.display.update()
+
+            if event.is_set():
+                break
+            time.sleep(delay)
+            
     
     def draw_matrix(self, matrix: Matrix) -> None:
-        offset_x = 100
-        offset_y = 200
-        
-        cell_size = matrix.get_cell_size()
-        delta = (self.block_size - cell_size) // 2
+        delta = (self.block_size - self.cell_size) / 2
         
         for i in range(matrix.get_width()):
             for j in range(matrix.get_height()):
                 # pygame is reversed, x is j and y is i
-                x = j * (self.block_size) + offset_x
-                y = i * (self.block_size) + offset_y
+                x = j * (self.block_size) + self.matrix_offset_x
+                y = i * (self.block_size) + self.matrix_offset_y
                 
-                rect = pygame.Rect(x + delta, y + delta, cell_size, cell_size)
+                rect = pygame.Rect(x + delta, y + delta, self.cell_size, self.cell_size)
                 rect_color = matrix.get_color((i,j))
                 self.draw_cell(rect, rect_color)
     
