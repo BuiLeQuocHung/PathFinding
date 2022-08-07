@@ -7,27 +7,32 @@ from Visual.Screen import Screen
 
 
 pygame.init()
-SCREEN_WIDTH = 1080
-SCREEN_HEIGHT = 720
+pygame.display.set_caption("Path Finding")
+SCREEN_WIDTH = 1800
+SCREEN_HEIGHT = 900
 
-MATRIX_ROW = 30
-MATRIX_COL = 60
+MATRIX_ROW = 37
+MATRIX_COL = 90
 
 PROCESSING_ORDER_COLOR = (16,78,139) # blue
 PATH_COLOR = (255,255,0) # yellow
-
-
     
 
 class MainProgram:
     def __init__(self) -> None:
         self.ui_manager = pygame_gui.UIManager((SCREEN_WIDTH, SCREEN_HEIGHT))
-        self.algorithm_selection_dropdown = pygame_gui.elements.UIDropDownMenu(AlgorithmOption.to_list(), AlgorithmOption.default_value(), pygame.Rect(10, 10, 120, 30), self.ui_manager)
+        
+        self.algorithm_selection_dropdown = pygame_gui.elements.UIDropDownMenu(
+            AlgorithmOption.to_list(), AlgorithmOption.default_value(), 
+            pygame.Rect(10, 10, 120, 30), self.ui_manager,
+            expansion_height_limit=120
+            )
+        self.algorithm_selection_dropdown.set_dimensions((150, 30))
         
         self.screen = Screen((SCREEN_WIDTH, SCREEN_HEIGHT))
         
         self.background = pygame.Surface((SCREEN_WIDTH, self.screen.matrix_offset_y))
-        self.background.fill(pygame.Color('#000000'))
+        self.background.fill(pygame.Color('#F5F5DC'))
         
         self.matrix = Matrix(MATRIX_ROW, MATRIX_COL)
         
@@ -38,13 +43,13 @@ class MainProgram:
         self.event= threading.Event()
         self.thread = None
     
-    
-        
     def run(self):
         is_running = True
         
         dragging = False
         dragging_cell = None
+        
+        current_algo = AlgorithmOption.default_value()
         
         self.init_draw()
         
@@ -55,8 +60,6 @@ class MainProgram:
             
             mouse_clicks = pygame.mouse.get_pressed()
             l_click, w_click, r_click = mouse_clicks
-            
-                
                 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -68,14 +71,16 @@ class MainProgram:
                             self.reset_thread()
                         
                         self.screen.draw_matrix(self.matrix)
-                            
-                        self.algorithm_selection.run_algorithm(self.matrix, event.text)
-                        processing_order = self.algorithm_selection.get_processing_order()
-                        path = self.algorithm_selection.get_path()
+                        
+                        current_algo = event.text
+                        
+                        result = self.run_algorithm(current_algo)
+                        processing_order = result.get('processing_order', [])
+                        path = result.get('path', [])
                         
                         args = ( 
-                                (self.screen.draw_cors, (processing_order, PROCESSING_ORDER_COLOR, 0.01)),
-                                (self.screen.draw_cors, (path, PATH_COLOR, 0.01)),
+                                (self.screen.draw_cors, (processing_order, PROCESSING_ORDER_COLOR, 0.0001)),
+                                (self.screen.draw_cors, (path, PATH_COLOR, 0.015)),
                             )
                         self.thread = threading.Thread(target=self.threading_multi_functions, args=(self.event, args) )
                         self.thread.start()
@@ -93,9 +98,6 @@ class MainProgram:
                         if self.mouse_collide_rect(mpos, obj_cor, block_size, block_size):
                             dragging = True
                             dragging_cell = cell
-                    
-                            if self.thread and self.thread.is_alive():
-                                self.reset_thread()
                         
                 elif event.type == pygame.MOUSEBUTTONUP:
                     dragging = False
@@ -109,10 +111,24 @@ class MainProgram:
                 matrix_cor = self.screen_cor_to_matrix_cor(mpos)
 
                 if matrix_cor != dragging_cell.get_cor():
+                    if self.thread and self.thread.is_alive():
+                        self.reset_thread()
+                        
                     dragging_cell.update_cor(matrix_cor)
                     self.screen.draw_matrix(self.matrix)
                     
-
+                    result = self.run_algorithm(current_algo)
+                    processing_order = result.get('processing_order', [])
+                    path = result.get('path', [])
+                    
+                    args = ( 
+                            (self.screen.draw_cors, (processing_order, PROCESSING_ORDER_COLOR, 0)),
+                            (self.screen.draw_cors, (path, PATH_COLOR, 0)),
+                        )
+                    self.thread = threading.Thread(target=self.threading_multi_functions, args=(self.event, args) )
+                    self.thread.start()
+                    
+            # self.algorithm_selection_dropdown.rebuild()
             self.screen.draw_ui_manager(self.ui_manager)
             pygame.display.update()
             self.ui_manager.update(time_delta)
@@ -121,6 +137,16 @@ class MainProgram:
         self.screen.draw_surface(self.background)
         self.screen.draw_matrix(self.matrix)
         self.screen.draw_ui_manager(self.ui_manager)
+        
+    def run_algorithm(self, current_algo: str):
+        self.algorithm_selection.run_algorithm(self.matrix, current_algo)
+        processing_order = self.algorithm_selection.get_processing_order()
+        path = self.algorithm_selection.get_path()
+        
+        return {
+            'processing_order': processing_order,
+            'path': path,
+        }
             
     def threading_multi_functions(self, event: threading.Event, args):
         for each in args:

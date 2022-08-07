@@ -7,13 +7,13 @@ from DataSctructure.Matrix import Matrix
 
 
 class Screen:
-    block_size = 18
-    cell_size = 15
+    block_size = 20
+    cell_size = 18
     
     def __init__(self, size) -> None:
         self.screen = pygame.display.set_mode(size)
         self.matrix_offset_x = 0
-        self.matrix_offset_y = 100
+        self.matrix_offset_y = 160
         
     def draw_cell(self, rect: pygame.Rect, color: Tuple) -> None:
         pygame.draw.rect(self.screen, color, rect)
@@ -37,13 +37,12 @@ class Screen:
             
             rect = pygame.Rect(new_x + delta, new_y + delta, self.cell_size, self.cell_size)
             self.draw_cell(rect, color)
-            pygame.display.update()
-
+            
             if event.is_set():
                 break
+
             time.sleep(delay)
-            
-    
+
     def draw_matrix(self, matrix: Matrix) -> None:
         delta = (self.block_size - self.cell_size) / 2
         

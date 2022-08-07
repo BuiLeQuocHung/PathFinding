@@ -6,7 +6,7 @@ from DataSctructure.Matrix import Matrix
 from DataSctructure.PathFinding_helper import Cost, History, Point
 
 
-class Dijkstra(AlgorithmBase):
+class UCS(AlgorithmBase):
     def __init__(self, matrix: Matrix) -> None:
         super().__init__(matrix)
     
@@ -30,13 +30,15 @@ class Dijkstra(AlgorithmBase):
             point = min_heap.pop()
             
             cur_cor = point.get_cor()
-            cur_cost = point.get_cost()
+            
             
             if cur_cor not in [start_cor, end_cor]:
                 processing_order.append(cur_cor)
 
             if cur_cor == end_cor:
                 break
+            
+            cur_cost = cost_map.get_path_cost(cur_cor)
             
             visited[point] = True
             
@@ -49,13 +51,16 @@ class Dijkstra(AlgorithmBase):
                         min_heap.add(Point(next_cor, next_cost))
         
         if history_map.is_cor_exist(end_cor):
-            print(cost_map.get_path_cost(end_cor))
-            path = self.gen_path(history_map)
+            path = path = self.gen_path(history_map, start_cor, end_cor)
+            cost = cost_map.get_path_cost(end_cor)
+            print(cost)
         else:
             path = []
+            cost = None
             
         self.update_path(path)
         self.update_processing_order(processing_order)
+        self.update_cost(cost)
             
         
     

@@ -1,0 +1,3 @@
+
+class Greedy:
+    pass

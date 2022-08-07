@@ -13,22 +13,14 @@ class AlgorithmBase:
         """
         raise NotImplementedError('Implement path finding please!!')
     
-    def get_path():
-        """
-            return path from start to end
-        """
-        raise NotImplementedError('Implement get path please!!')
-    
-    def gen_path(self, history_map: History):
+    def gen_path(self, history_map: History, start_cor, end_cor):
         """
             Gen path from start to end using history_map
         """
-        start_cor = self.matrix.get_start_cor()
-        end_cor = self.matrix.get_end_cor()
         
         path = []
         cor = history_map.get_parent(end_cor)
-        while cor != start_cor:
+        while cor and cor != start_cor:
             path = [cor] + path
             cor = history_map.get_parent(cor)
         return path
@@ -44,3 +36,9 @@ class AlgorithmBase:
     
     def get_processing_order(self):
         return self.processing_order
+    
+    def update_cost(self, cost):
+        self.cost = cost
+        
+    def get_cost(self):
+        return self.cost

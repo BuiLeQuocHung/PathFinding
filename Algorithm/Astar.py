@@ -29,13 +29,14 @@ class Astar(AlgorithmBase):
             point = min_heap.pop()
             
             cur_cor = point.get_cor()
-            cur_cost = cost_map.get_path_cost(cur_cor)
             
             if cur_cor not in [start_cor, end_cor]:
                 processing_order.append(cur_cor)
 
             if cur_cor == end_cor:
                 break
+            
+            cur_cost = cost_map.get_path_cost(cur_cor)
             
             for next_cor in self.matrix.get_neighbors(cur_cor):
                 path_cost = cur_cost + self.matrix.get_cell(next_cor).get_cost()
@@ -47,13 +48,16 @@ class Astar(AlgorithmBase):
                     min_heap.add(Point(next_cor, priority))
     
         if history_map.is_cor_exist(end_cor):
-            print(cost_map.get_path_cost(end_cor))
-            path = self.gen_path(history_map)
+            path = self.gen_path(history_map, start_cor, end_cor)
+            cost = cost_map.get_path_cost(end_cor)
+            print(cost)
         else:
             path = []
+            cost = None
             
         self.update_path(path)
         self.update_processing_order(processing_order)
+        self.update_cost(cost)
         
     
     def heuristic(self, cur_point, end) -> int:

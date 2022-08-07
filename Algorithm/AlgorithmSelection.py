@@ -1,15 +1,17 @@
 import enum
 from Algorithm.Astar import Astar
 from Algorithm.BFS import BFS
+from Algorithm.BidirectionalSearch import BidirectionalSearch
 from Algorithm.DFS import DFS
-from Algorithm.Dijkstra import Dijkstra
+from Algorithm.UCS import UCS
 from DataSctructure.Matrix import Matrix
 
 class AlgorithmOption(enum.Enum):
     ASTAR = 'Astar'
     BFS = 'BFS'
     DFS = 'DFS'
-    DIJKSTRA = "Dijkstra"
+    UCS = "UCS"
+    BIDIRECTION = "Bidirection"
     
     @classmethod
     def to_list(cls):
@@ -30,8 +32,10 @@ class AlgorithmSelection:
             return BFS(matrix)
         elif algorithm_name == AlgorithmOption.DFS.value:
             return DFS(matrix)
-        elif algorithm_name == AlgorithmOption.DIJKSTRA.value:
-            return Dijkstra(matrix)
+        elif algorithm_name == AlgorithmOption.UCS.value:
+            return UCS(matrix)
+        elif algorithm_name == AlgorithmOption.BIDIRECTION.value:
+            return BidirectionalSearch(matrix) 
         
         raise ValueError("Algorithm not exists")
         
@@ -45,3 +49,6 @@ class AlgorithmSelection:
     
     def get_processing_order(self):
         return self.current_algorithm.get_processing_order()
+    
+    def get_cost(self):
+        return self.current_algorithm.get_cost()
