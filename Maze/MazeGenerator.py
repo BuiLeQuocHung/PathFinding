@@ -63,10 +63,7 @@ class MazeGenerator:
             middle_cell = self.middle_cell(current_cell, next_cell)
             self.get_cell(middle_cell).update_cell(can_move=True, cost=random.randint(1,4))
             stack.append(current_cell)
-
             current_cell = next_cell
-        
-        return self.matrix
             
     def middle_cell(self, cor1: Tuple, cor2: Tuple) -> Tuple:
         x1, y1 = cor1

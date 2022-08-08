@@ -123,8 +123,12 @@ class MainProgram:
                             self.reset_thread()
                         
                         self.matrix.update_matrix(self.maze_generator.gen_maze())
-                        self.screen.draw_matrix(self.matrix)
-                        self.run_algorithm(current_algo, 0.001, 0.01)
+                        
+                        args = ( 
+                                (self.screen.draw_matrix_animated, (self.matrix, 0.0005, self.event)),
+                            )
+                        self.thread = threading.Thread(target=self.threading_multi_functions, args=(args, self.event) )
+                        self.thread.start()
                         
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_clicks = pygame.mouse.get_pressed()
