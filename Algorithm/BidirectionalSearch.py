@@ -1,7 +1,7 @@
 from typing import Tuple
 from Algorithm.AlgorithmBase import AlgorithmBase
-from DataSctructure.Matrix import Matrix
-from DataSctructure.PathFinding_helper import Cost, History
+from DataStructure.Matrix import Matrix
+from DataStructure.AlgorithmHelper import Cost, History
 
 class BidirectionalSearch(AlgorithmBase):
     def __init__(self, matrix: Matrix) -> None:
@@ -34,14 +34,14 @@ class BidirectionalSearch(AlgorithmBase):
                 'queue': queue_start,
                 'history_map': history_map_start,
                 'cost_map': cost_map_start,
-                'visited': {start_cor: True}
+                'visited': {}
             },
             1: {
                 'begin_cor': end_cor,
                 'queue': queue_end,
                 'history_map': history_map_end,
                 'cost_map': cost_map_end,
-                'visited': {end_cor: True}
+                'visited': {}
             }
         }
         
@@ -78,8 +78,11 @@ class BidirectionalSearch(AlgorithmBase):
             
             count = next_count
             next_count = (next_count + 1) % 2
-
-        if flag:
+        
+        if start_cor == end_cor:
+            path = []
+            cost = None
+        elif flag:
             history_map_next = dictionary[next_count]['history_map']
             begin_cor_next = dictionary[next_count]['begin_cor']
             first_path = self.gen_path(history_map_next, begin_cor_next, history_map_cur.get_parent(cur_cor))
@@ -93,9 +96,6 @@ class BidirectionalSearch(AlgorithmBase):
             cost_map_next = dictionary[next_count]['cost_map']
             cost = cost_map_cur.get_path_cost(history_map_cur.get_parent(cur_cor)) \
                 + cost_map_next.get_path_cost(cur_cor)
-                
-            print(cost)
-
         else:
             path = []
             cost = None

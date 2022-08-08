@@ -1,9 +1,9 @@
 from typing import List, Tuple
 
 from Algorithm.AlgorithmBase import AlgorithmBase
-from DataSctructure.Heap import MinHeap
-from DataSctructure.Matrix import Matrix
-from DataSctructure.PathFinding_helper import Cost, History, Point
+from DataStructure.Heap import MinHeap
+from DataStructure.Matrix import Matrix
+from DataStructure.AlgorithmHelper import Cost, History, Point
 
 
 class UCS(AlgorithmBase):
@@ -53,7 +53,6 @@ class UCS(AlgorithmBase):
         if history_map.is_cor_exist(end_cor):
             path = path = self.gen_path(history_map, start_cor, end_cor)
             cost = cost_map.get_path_cost(end_cor)
-            print(cost)
         else:
             path = []
             cost = None

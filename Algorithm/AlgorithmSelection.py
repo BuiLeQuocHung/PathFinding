@@ -3,8 +3,9 @@ from Algorithm.Astar import Astar
 from Algorithm.BFS import BFS
 from Algorithm.BidirectionalSearch import BidirectionalSearch
 from Algorithm.DFS import DFS
+from Algorithm.Greedy import Greedy
 from Algorithm.UCS import UCS
-from DataSctructure.Matrix import Matrix
+from DataStructure.Matrix import Matrix
 
 class AlgorithmOption(enum.Enum):
     ASTAR = 'Astar'
@@ -12,6 +13,7 @@ class AlgorithmOption(enum.Enum):
     DFS = 'DFS'
     UCS = "UCS"
     BIDIRECTION = "Bidirection"
+    GREEDY = "Greedy"
     
     @classmethod
     def to_list(cls):
@@ -35,7 +37,9 @@ class AlgorithmSelection:
         elif algorithm_name == AlgorithmOption.UCS.value:
             return UCS(matrix)
         elif algorithm_name == AlgorithmOption.BIDIRECTION.value:
-            return BidirectionalSearch(matrix) 
+            return BidirectionalSearch(matrix)
+        elif algorithm_name == AlgorithmOption.GREEDY.value:
+            return Greedy(matrix)
         
         raise ValueError("Algorithm not exists")
         

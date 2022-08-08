@@ -1,6 +1,6 @@
 from typing import List, Tuple
 from Algorithm.AlgorithmBase import AlgorithmBase
-from DataSctructure.PathFinding_helper import Cost, History
+from DataStructure.AlgorithmHelper import Cost, History
 
 class DFS(AlgorithmBase):
     def __init__(self, matrix) -> None:

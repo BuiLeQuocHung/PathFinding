@@ -1,7 +1,6 @@
 from typing import List, Tuple
-
-from DataSctructure.Matrix import Matrix
-from DataSctructure.PathFinding_helper import History
+from DataStructure.Matrix import Matrix
+from DataStructure.AlgorithmHelper import History
 
 class AlgorithmBase:
     def __init__(self, matrix: Matrix) -> None:
@@ -15,7 +14,8 @@ class AlgorithmBase:
     
     def gen_path(self, history_map: History, start_cor, end_cor):
         """
-            Gen path from start to end using history_map
+            Gen path from start to end using history_map.
+            Not include start and end point.
         """
         
         path = []

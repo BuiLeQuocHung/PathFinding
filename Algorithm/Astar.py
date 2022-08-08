@@ -1,12 +1,9 @@
 from typing import List, Tuple
-from DataSctructure.Heap import MinHeap
-from DataSctructure.PathFinding_helper import Cost, History, Point
+from DataStructure.Heap import MinHeap
+from DataStructure.AlgorithmHelper import Cost, History, Point
 from Algorithm.AlgorithmBase import AlgorithmBase
 
-class Astar(AlgorithmBase):
-    path = []
-    processing_order = []
-    
+class Astar(AlgorithmBase):    
     def __init__(self, matrix) -> None:
         super().__init__(matrix)
         
@@ -50,7 +47,6 @@ class Astar(AlgorithmBase):
         if history_map.is_cor_exist(end_cor):
             path = self.gen_path(history_map, start_cor, end_cor)
             cost = cost_map.get_path_cost(end_cor)
-            print(cost)
         else:
             path = []
             cost = None
@@ -60,7 +56,7 @@ class Astar(AlgorithmBase):
         self.update_cost(cost)
         
     
-    def heuristic(self, cur_point, end) -> int:
+    def heuristic(self, cur_point, end_point) -> int:
         cur_x, cur_y = cur_point
-        end_x, end_y = end
+        end_x, end_y = end_point
         return abs(end_x - cur_x) + abs(end_y - cur_y)
