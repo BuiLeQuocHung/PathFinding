@@ -1,7 +1,6 @@
-from typing import Tuple
-from Algorithm.AlgorithmBase import AlgorithmBase
+from PathFindingAlgorithm.AlgorithmBase import AlgorithmBase
 from DataStructure.Matrix import Matrix
-from DataStructure.AlgorithmHelper import Cost, History
+from PathFindingAlgorithm.Helper.AlgorithmHelper import Cost, History
 
 class BidirectionalSearch(AlgorithmBase):
     def __init__(self, matrix: Matrix) -> None:

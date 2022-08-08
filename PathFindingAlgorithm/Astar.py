@@ -1,10 +1,9 @@
-from Algorithm.AlgorithmBase import AlgorithmBase
 from DataStructure.Heap import MinHeap
-from DataStructure.Matrix import Matrix
-from DataStructure.AlgorithmHelper import Cost, History, Point
+from PathFindingAlgorithm.Helper.AlgorithmHelper import Cost, History, Point
+from PathFindingAlgorithm.AlgorithmBase import AlgorithmBase
 
-class Greedy(AlgorithmBase):
-    def __init__(self, matrix: Matrix) -> None:
+class Astar(AlgorithmBase):    
+    def __init__(self, matrix) -> None:
         super().__init__(matrix)
         
     def path_finding(self):
@@ -38,10 +37,11 @@ class Greedy(AlgorithmBase):
             for next_cor in self.matrix.get_neighbors(cur_cor):
                 path_cost = cur_cost + self.matrix.get_cell(next_cor).get_cost()
                 est_cost = self.heuristic(next_cor, end_cor)
-                if not history_map.is_cor_exist(next_cor):
+                priority = path_cost + est_cost
+                if not history_map.is_cor_exist(next_cor) or cost_map.compare_cost(next_cor, path_cost):
                     cost_map.update(next_cor, path_cost)
                     history_map.update(cur_cor, next_cor)
-                    min_heap.add(Point(next_cor, est_cost))
+                    min_heap.add(Point(next_cor, priority))
     
         if history_map.is_cor_exist(end_cor):
             path = self.gen_path(history_map, start_cor, end_cor)
@@ -54,8 +54,8 @@ class Greedy(AlgorithmBase):
         self.update_processing_order(processing_order)
         self.update_cost(cost)
         
+    
     def heuristic(self, cur_point, end_point) -> int:
         cur_x, cur_y = cur_point
         end_x, end_y = end_point
         return abs(end_x - cur_x) + abs(end_y - cur_y)
-        

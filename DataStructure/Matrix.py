@@ -17,6 +17,9 @@ class Cell_color:
     def get_color(self, cost):
         return self.color[cost]
     
+    def get_number_of_colors(self):
+        return len(self.color)
+    
 
 class Cell:
     color: Cell_color = Cell_color.instance()
@@ -58,6 +61,7 @@ class Special_Cell(Cell):
     def update_cell(self, can_move: bool, cost: int) -> None:
         pass
 
+@Singleton
 class Matrix:
     color = Cell_color.instance()
     start_color = CELL_START_COLOR # red
@@ -90,15 +94,14 @@ class Matrix:
                 self.matrix[i][j] = Cell(can_move, cost)
     
     def get_neighbors(self, cor) -> List[Tuple]:
-        neightbors = []
+        neighbors = []
         x, y = cor
         for move in self.moves:
             i, j = move
             new_cor = (x+i, y+j)
             if 0 <= x+i < self.m and 0 <= y+j < self.n and self.get_cell(new_cor).can_move():
-                    neightbors.append(new_cor)
-        
-        return neightbors
+                    neighbors.append(new_cor)
+        return neighbors
 
     def get_color(self, cor) -> Tuple:
         if cor == self.start.get_cor():
@@ -129,4 +132,7 @@ class Matrix:
     
     def get_height(self):
         return self.n
+    
+    def update_matrix(self, matrix):
+        self.matrix = matrix
     

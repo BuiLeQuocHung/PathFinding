@@ -1,22 +1,15 @@
-from typing import List, Tuple
+from PathFindingAlgorithm.AlgorithmBase import AlgorithmBase
+from PathFindingAlgorithm.Helper.AlgorithmHelper import Cost, History
 
-from Algorithm.AlgorithmBase import AlgorithmBase
-from DataStructure.Heap import MinHeap
-from DataStructure.Matrix import Matrix
-from DataStructure.AlgorithmHelper import Cost, History, Point
-
-
-class UCS(AlgorithmBase):
-    def __init__(self, matrix: Matrix) -> None:
+class DFS(AlgorithmBase):
+    def __init__(self, matrix) -> None:
         super().__init__(matrix)
-    
-    def path_finding(self):
+        
+    def path_finding(self):        
         start_cor = self.matrix.get_start_cor()
         end_cor = self.matrix.get_end_cor()
         
-        visited = {}
-        
-        min_heap = MinHeap([Point(start_cor, self.matrix.get_cell(start_cor).get_cost())])
+        stack = [start_cor]
         
         history_map = History()
         history_map.update(None, start_cor)
@@ -26,11 +19,8 @@ class UCS(AlgorithmBase):
         
         processing_order = []
         
-        while not min_heap.isEmpty():
-            point = min_heap.pop()
-            
-            cur_cor = point.get_cor()
-            
+        while stack:
+            cur_cor = stack.pop()
             
             if cur_cor not in [start_cor, end_cor]:
                 processing_order.append(cur_cor)
@@ -40,15 +30,12 @@ class UCS(AlgorithmBase):
             
             cur_cost = cost_map.get_path_cost(cur_cor)
             
-            visited[point] = True
-            
             for next_cor in self.matrix.get_neighbors(cur_cor):
-                if next_cor not in visited:
+                if not history_map.is_cor_exist(next_cor):
+                    history_map.update(cur_cor, next_cor)
                     next_cost = cur_cost + self.matrix.get_cell(next_cor).get_cost()
-                    if not history_map.is_cor_exist(next_cor) or cost_map.compare_cost(next_cor, next_cost):
-                        history_map.update(cur_cor, next_cor)
-                        cost_map.update(next_cor, next_cost)
-                        min_heap.add(Point(next_cor, next_cost))
+                    cost_map.update(next_cor, next_cost)
+                    stack.append(next_cor)
         
         if history_map.is_cor_exist(end_cor):
             path = path = self.gen_path(history_map, start_cor, end_cor)
@@ -60,6 +47,3 @@ class UCS(AlgorithmBase):
         self.update_path(path)
         self.update_processing_order(processing_order)
         self.update_cost(cost)
-            
-        
-    

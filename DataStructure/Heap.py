@@ -1,6 +1,5 @@
 from typing import List
-from DataStructure.AlgorithmHelper import Point
-
+from PathFindingAlgorithm.Helper.AlgorithmHelper import Point
 
 class MinHeap:
     def __init__(self, arr: List[Point]):

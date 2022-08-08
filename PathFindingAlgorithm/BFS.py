@@ -1,8 +1,7 @@
-from typing import List, Tuple
-from Algorithm.AlgorithmBase import AlgorithmBase
-from DataStructure.AlgorithmHelper import Cost, History
+from PathFindingAlgorithm.AlgorithmBase import AlgorithmBase
+from PathFindingAlgorithm.Helper.AlgorithmHelper import Cost, History
 
-class DFS(AlgorithmBase):
+class BFS(AlgorithmBase):
     def __init__(self, matrix) -> None:
         super().__init__(matrix)
         
@@ -10,7 +9,7 @@ class DFS(AlgorithmBase):
         start_cor = self.matrix.get_start_cor()
         end_cor = self.matrix.get_end_cor()
         
-        stack = [start_cor]
+        queue = [start_cor]
         
         history_map = History()
         history_map.update(None, start_cor)
@@ -20,8 +19,8 @@ class DFS(AlgorithmBase):
         
         processing_order = []
         
-        while stack:
-            cur_cor = stack.pop()
+        while queue:
+            cur_cor = queue.pop(0)
             
             if cur_cor not in [start_cor, end_cor]:
                 processing_order.append(cur_cor)
@@ -36,10 +35,10 @@ class DFS(AlgorithmBase):
                     history_map.update(cur_cor, next_cor)
                     next_cost = cur_cost + self.matrix.get_cell(next_cor).get_cost()
                     cost_map.update(next_cor, next_cost)
-                    stack.append(next_cor)
+                    queue.append(next_cor)
         
         if history_map.is_cor_exist(end_cor):
-            path = path = self.gen_path(history_map, start_cor, end_cor)
+            path = self.gen_path(history_map, start_cor, end_cor)
             cost = cost_map.get_path_cost(end_cor)
         else:
             path = []

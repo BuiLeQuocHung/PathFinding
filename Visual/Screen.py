@@ -16,16 +16,6 @@ class Screen:
     def draw_cell(self, rect: pygame.Rect, color: Tuple) -> None:
         pygame.draw.rect(self.screen, color, rect)
         
-    def draw_cells(self, rects:List[pygame.Rect], colors: List[Tuple]) -> None:
-        n = len(rects)
-        m = len(colors)
-        
-        if n != m:
-            raise ValueError("rects and colors must have same length")
-        
-        for idx in range(n):
-            self.draw_cell(rects[idx], colors[idx])
-        
     def draw_cors(self, cors: List[Tuple], color, delay, event: threading.Event):
         delta = (BLOCK_SIZE - CELL_SIZE) / 2
         for cor in cors:
@@ -57,5 +47,5 @@ class Screen:
     def draw_ui_manager(self, ui_manager: pygame_gui.UIManager) -> None:
         ui_manager.draw_ui(self.screen)
         
-    def draw_surface(self, surface: pygame.Surface) -> None:
-        self.screen.blit(surface, (0, 0))
+    def draw_surface(self, surface: pygame.Surface, x, y) -> None:
+        self.screen.blit(surface, (x, y))

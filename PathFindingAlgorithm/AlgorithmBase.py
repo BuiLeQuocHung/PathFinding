@@ -1,6 +1,6 @@
 from typing import List, Tuple
 from DataStructure.Matrix import Matrix
-from DataStructure.AlgorithmHelper import History
+from PathFindingAlgorithm.Helper.AlgorithmHelper import History
 
 class AlgorithmBase:
     def __init__(self, matrix: Matrix) -> None:

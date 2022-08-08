@@ -1,10 +1,10 @@
 import enum
-from Algorithm.Astar import Astar
-from Algorithm.BFS import BFS
-from Algorithm.BidirectionalSearch import BidirectionalSearch
-from Algorithm.DFS import DFS
-from Algorithm.Greedy import Greedy
-from Algorithm.UCS import UCS
+from PathFindingAlgorithm.Astar import Astar
+from PathFindingAlgorithm.BFS import BFS
+from PathFindingAlgorithm.BidirectionalSearch import BidirectionalSearch
+from PathFindingAlgorithm.DFS import DFS
+from PathFindingAlgorithm.Greedy import Greedy
+from PathFindingAlgorithm.UCS import UCS
 from DataStructure.Matrix import Matrix
 
 class AlgorithmOption(enum.Enum):

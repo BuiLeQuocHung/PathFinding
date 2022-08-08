@@ -1,8 +1,9 @@
 import pygame, pygame_gui
 import threading
 
-from Algorithm.AlgorithmSelection import AlgorithmOption, AlgorithmSelection
+from PathFindingAlgorithm.AlgorithmSelection import AlgorithmOption, AlgorithmSelection
 from DataStructure.Matrix import Cell, Matrix, Special_Cell
+from Maze.MazeGenerator import MazeGenerator
 
 from Visual.Button.CellButton import CellButton
 from Visual.Button.RadioButton import RadioButton
@@ -22,7 +23,7 @@ class MainProgram:
         self.algorithm_selection_dropdown = pygame_gui.elements.UIDropDownMenu(
             AlgorithmOption.to_list(), AlgorithmOption.default_value(), 
             pygame.Rect(10, 5, 120, 30), self.ui_manager,
-            expansion_height_limit=120
+            expansion_height_limit=127
             )
         self.algorithm_selection_dropdown.set_dimensions((150, 30))
         
@@ -41,16 +42,21 @@ class MainProgram:
             RadioButton(pygame.Rect(750, 40, 120, 30), "Uniform cost", self.ui_manager)
         ])
         
+        self.gen_maze_button = pygame_gui.elements.UIButton(pygame.Rect(480, 25, 120, 30), "New maze", self.ui_manager)
         
         self.cost_textbox = pygame_gui.elements.UITextBox("Cost: ", pygame.Rect(1250, 10, 120, 30), self.ui_manager)
         self.processing_count_textbox = pygame_gui.elements.UITextBox("Visited: ", pygame.Rect(1250, 40, 120, 30), self.ui_manager)
         
         self.screen = Screen((SCREEN_WIDTH, SCREEN_HEIGHT))
         
-        self.background = pygame.Surface((SCREEN_WIDTH, self.screen.matrix_offset_y))
-        self.background.fill(pygame.Color('#F5F5DC'))
+        self.upper_background = pygame.Surface((SCREEN_WIDTH, self.screen.matrix_offset_y))
+        self.upper_background.fill(pygame.Color('#202020'))
         
-        self.matrix = Matrix(MATRIX_ROW, MATRIX_COL)
+        self.lower_background = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT - self.screen.matrix_offset_y))
+        self.lower_background.fill(pygame.Color('#202020'))
+        
+        self.matrix = Matrix.instance(MATRIX_ROW, MATRIX_COL)
+        self.maze_generator = MazeGenerator.instance(MATRIX_ROW, MATRIX_COL)
         
         self.clock = pygame.time.Clock()
         
@@ -68,13 +74,13 @@ class MainProgram:
         
         current_algo = AlgorithmOption.default_value()
         
+        
         self.init_draw()
         
         while is_running:      
             time_delta = self.clock.tick(120)
         
-            self.screen.draw_surface(self.background)
-            print(button_select)
+            self.screen.draw_surface(self.upper_background, 0, 0)
                 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -89,7 +95,7 @@ class MainProgram:
                         
                         current_algo = event.text
                         
-                        self.run_algorithm(current_algo)
+                        self.run_algorithm(current_algo, 0.001, 0.01)
                 
                 elif event.type == pygame_gui.UI_BUTTON_PRESSED:     
                     # Select target cell button
@@ -102,14 +108,23 @@ class MainProgram:
                     if event.ui_element == self.gen_new_matrix_button:
                         if self.thread:
                             self.reset_thread()
-                        
-                        print('here')
+
                         status = self.list_matrix_status_buttons.get_status()
                         uniform_cost = status['Uniform cost']
                         can_move = status['Walls']
                         self.matrix.gen_matrix(uniform_cost, can_move)
                         self.screen.draw_matrix(self.matrix)
-        
+                        
+                        self.cost_textbox.set_text("Cost: {}".format(''))
+                        self.processing_count_textbox.set_text("Visited: {}".format(''))
+                        
+                    elif event.ui_element == self.gen_maze_button:
+                        if self.thread:
+                            self.reset_thread()
+                        
+                        self.matrix.update_matrix(self.maze_generator.gen_maze())
+                        self.screen.draw_matrix(self.matrix)
+                        self.run_algorithm(current_algo, 0.001, 0.01)
                         
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_clicks = pygame.mouse.get_pressed()
@@ -152,7 +167,7 @@ class MainProgram:
                         dragging_cell.update_cor(matrix_cor)
                         self.screen.draw_matrix(self.matrix)
                         
-                        self.run_algorithm(current_algo)
+                        self.run_algorithm(current_algo, 0, 0)
                     
                 elif button_select:
                     mpos = pygame.mouse.get_pos()
@@ -166,7 +181,7 @@ class MainProgram:
                         self.matrix.get_cell(matrix_cor).update_cell(cell.can_move(), cell.get_cost())
                         self.screen.draw_matrix(self.matrix)
                         
-                        self.run_algorithm(current_algo)
+                        self.run_algorithm(current_algo, 0.001, 0.01)
                     
             self.screen.draw_ui_manager(self.ui_manager)
             pygame.display.update()
@@ -175,11 +190,12 @@ class MainProgram:
 
 
     def init_draw(self):
-        self.screen.draw_surface(self.background)
+        self.screen.draw_surface(self.upper_background, 0, 0)
+        self.screen.draw_surface(self.lower_background, 0, self.screen.matrix_offset_y)
         self.screen.draw_matrix(self.matrix)
         self.screen.draw_ui_manager(self.ui_manager)
         
-    def run_algorithm(self, current_algo: str):
+    def run_algorithm(self, current_algo: str, processing_draw_delay, path_draw_delay):
         """
             run algorithm and update screen
         """
@@ -192,8 +208,8 @@ class MainProgram:
         cost = self.algorithm_selection.get_cost()
         
         args = ( 
-                (self.screen.draw_cors, (processing_order, PROCESSING_ORDER_COLOR, 0.001, self.event)),
-                (self.screen.draw_cors, (path, PATH_COLOR, 0.008, self.event)),
+                (self.screen.draw_cors, (processing_order, PROCESSING_ORDER_COLOR, processing_draw_delay, self.event)),
+                (self.screen.draw_cors, (path, PATH_COLOR, path_draw_delay, self.event)),
                 (self.cost_textbox.set_text, ["Cost: {}".format(cost)]),
                 (self.processing_count_textbox.set_text, ["Visited: {}".format(len(processing_order))])
             )
