@@ -125,7 +125,7 @@ class MainProgram:
                         self.matrix.update_matrix(self.maze_generator.gen_maze())
                         
                         args = ( 
-                                (self.screen.draw_matrix_animated, (self.matrix, 0.0005, self.event)),
+                                (self.screen.draw_matrix_animated, (self.matrix, 0.0007, self.event)),
                             )
                         self.thread = threading.Thread(target=self.threading_multi_functions, args=(args, self.event) )
                         self.thread.start()
