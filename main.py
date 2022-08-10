@@ -55,8 +55,8 @@ class MainProgram:
         self.lower_background = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT - self.screen.matrix_offset_y))
         self.lower_background.fill(pygame.Color('#202020'))
         
-        self.matrix = Matrix.instance(MATRIX_ROW, MATRIX_COL)
-        self.maze_generator = MazeGenerator.instance(MATRIX_ROW, MATRIX_COL)
+        self.matrix = Matrix(MATRIX_ROW, MATRIX_COL)
+        self.maze_generator = MazeGenerator(MATRIX_ROW, MATRIX_COL)
         
         self.clock = pygame.time.Clock()
         

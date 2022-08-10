@@ -3,7 +3,6 @@ from typing import Tuple, List
 from DataStructure.Matrix import Cell
 from Decorator.Singleton import Singleton
 
-@Singleton
 class MazeGenerator:
     def __init__(self, m, n) -> None:
         self.m = m

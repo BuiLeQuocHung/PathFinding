@@ -58,10 +58,10 @@ class Special_Cell(Cell):
     def get_cor(self):
         return self.cor
     
+    # Do not remove this function
     def update_cell(self, can_move: bool, cost: int) -> None:
         pass
 
-@Singleton
 class Matrix:
     color = Cell_color.instance()
     start_color = CELL_START_COLOR # red
