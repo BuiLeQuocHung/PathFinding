@@ -23,6 +23,7 @@ class UCS(AlgorithmBase):
         cost_map.update(start_cor, self.matrix.get_cell(start_cor).get_cost())
         
         processing_order = []
+        visited = {}
         
         while not min_heap.isEmpty():
             point = min_heap.pop()
@@ -30,8 +31,9 @@ class UCS(AlgorithmBase):
             cur_cor = point.get_cor()
             
             
-            if cur_cor not in [start_cor, end_cor]:
+            if cur_cor not in [start_cor, end_cor] and cur_cor not in visited:
                 processing_order.append(cur_cor)
+                visited[cur_cor] = True
 
             if cur_cor == end_cor:
                 break
